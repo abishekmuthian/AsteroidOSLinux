@@ -1,4 +1,3 @@
-
 import time
 import logging
 import queue
@@ -28,7 +27,6 @@ class MetaModule(type):
 
 
 class Module(metaclass=MetaModule):
-
     defconfig = dict()
 
     def __init__(self, **kwargs):
@@ -55,6 +53,7 @@ class TimeSyncModule(Module):
     def _update_time(self):
         self.asteroid.update_time()
         self.logger.info("Time synchronized")
+        self.logger.info("Battery level: %d", self.asteroid.battery_level())
 
     def _properties_changed(self, name, changed, lst):
         if changed.get("Connected", False):
@@ -62,7 +61,6 @@ class TimeSyncModule(Module):
 
 
 class ReconnectModule(Module):
-
     defconfig = {"timeout_base": 5,
                  "timeout_max": 300,
                  "timeout_reset": 120}
@@ -97,6 +95,7 @@ class ReconnectModule(Module):
             self._timeout = min(self._timeout + self.config["timeout_base"],
                                 self.config["timeout_max"])
             self.logger.info("Connected!")
+            self.logger.info("Battery level: %d", self.asteroid.battery_level())
 
     def _properties_changed(self, name, changed, lst):
         if not changed.get("Connected", True):
@@ -113,16 +112,16 @@ class NotifyModule(Module):
         super(NotifyModule, self).register(app)
         self._pending = queue.Queue()
         self._eavesdropper = DBusEavesdropper(
-                                    dbus.SessionBus(),
-                                    "org.freedesktop.Notifications",
-                                    "Notify",
-                                    self._on_notification)
+            dbus.SessionBus(),
+            "org.freedesktop.Notifications",
+            "Notify",
+            self._on_notification)
 
     def _notification_send(self):
         try:
             msg = self._pending.get_nowait()
             app_name, id_, app_icon, summary, body, actions, hints, \
-                expiration = msg.get_body()
+            expiration = msg.get_body()
             self.asteroid.notify(summary, body=body,
                                  id_=(id_ if id_ else None),
                                  app_name=app_name, app_icon=app_icon)
@@ -137,8 +136,7 @@ class NotifyModule(Module):
 
 
 class OWMModule(Module):
-
-    defconfig = {"update_interval": 2 * 60 * 60 }
+    defconfig = {"update_interval": 2 * 60 * 60}
 
     def register(self, app):
         super(OWMModule, self).register(app)
@@ -161,7 +159,6 @@ class OWMModule(Module):
 
 
 class MPDModule(Module):
-
     defconfig = {
         "host": "127.0.0.1",
         "port": 6600,
