@@ -32,7 +32,7 @@ Make sure your watch is already connected via bluetooth and run the example scri
 ./example.py
 ```
 
-##Fork Additions
+## Fork Additions
 This repo has been forked from https://github.com/atx/AsteroidOSLinux.
 
 ### MQTT
