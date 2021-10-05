@@ -64,6 +64,7 @@ class App:
                              id_=(payload["id"] if "id" in payload else None),
                              app_name=(payload["app_name"] if "app_name" in payload else None),
                              app_icon=(payload["app_icon"] if "app_icon" in payload else None))
+        self.logger.info("Battery level: %d", self.asteroid.battery_level())
 
     def _setup_mqtt(self, broker_address, mqtt_topic):
         self.logger.info("creating new mqtt instance")
